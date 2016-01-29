@@ -1,30 +1,16 @@
 var express = require('express');
-
+var swig = require('swig');
 var app = express();
+var routes = require('./routes/');
 
-app.use('/:special',function(req,resp,next) {
-  // console.log(req.params);
-  console.log(req.method, req.url);
-  next();
-},function(req,resp,next){
-  if (req.params.special === "special") {
-    // resp.send('special');
-    console.log('this is special');
-  }
-  next();
+app.engine('html', require('swig').renderFile);
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+swig.setDefaults({
+  cache: false
 });
 
-app.get('/', function(req,resp) {
-  resp.send("hello");
-});
-
-app.get('/news', function(req,resp) {
-  resp.send("news");
-});
-
-app.get('/special/test', function(req,resp) {
-  resp.send('special/test');
-});
-
+app.use('/', routes);
+app.use(express.static('public'));
 
 app.listen(3000);
