@@ -2,7 +2,7 @@ var express = require('express');
 var swig = require('swig');
 var app = express();
 var routes = require('./routes/');
-var bodyParser = require('body-parser');
+var socketio = require('socket.io');
 
 app.engine('html', require('swig').renderFile);
 app.set('view engine', 'html');
@@ -11,7 +11,11 @@ swig.setDefaults({
   cache: false
 });
 
-app.use('/', routes);
+
 app.use(express.static('public'));
 
-app.listen(3000);
+var server = app.listen(3000);
+var io = socketio.listen(server);
+
+app.use('/', routes(io));
+

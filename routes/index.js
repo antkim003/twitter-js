@@ -10,37 +10,40 @@ var jsonParser = bodyParser.json()
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-router.get('/', function (req, res) {
-  var tweets = tweetBank.list();
-  res.render( 'index', { title: 'Twitter.js', tweets: tweets, showForm: true } );
-});
 
-// router.user('/tweets/')
+module.exports = function(io) {
+  router.get('/', function (req, res) {
+    var tweets = tweetBank.list();
+    res.render( 'index', { title: 'Twitter.js', tweets: tweets, showForm: true } );
+  });
 
-// say that a client GET requests the path /users/nimit
-router.get( '/users/:name', function (req, res) {
-  var name = req.params.name.replace("_", " ");
-  var tweets = tweetBank.find(function(a){return a.name.toLowerCase() == name.toLowerCase()});  
-  res.render( 'index', { title: name, tweets: tweets, showForm: true, currentUser: true} );
-});
+  // router.user('/tweets/')
 
-// say that a client GET requests the path /users/nimit
-router.get( '/tweets/:id', function (req, res) {
-  var id = req.params.id;
-  var tweets = tweetBank.find(function(a){return a.id.toString() == id.toString()});  
-  res.render( 'index', { title: tweets[0].name, tweets: tweets } );
-});
+  // say that a client GET requests the path /users/nimit
+  router.get( '/users/:name', function (req, res) {
+    var name = req.params.name.replace("_", " ");
+    var tweets = tweetBank.find(function(a){return a.name.toLowerCase() == name.toLowerCase()});  
+    res.render( 'index', { title: name, tweets: tweets, showForm: true, currentUser: true} );
+  });
 
-router.post('/tweets', urlencodedParser, function(req, res) {
-  // console.log('post tweet req: ', req);
-  var name = req.body.name;
-  var text = req.body.text;
+  // say that a client GET requests the path /users/nimit
+  router.get( '/tweets/:id', function (req, res) {
+    var id = req.params.id;
+    var tweets = tweetBank.find(function(a){return a.id.toString() == id.toString()});  
+    res.render( 'index', { title: tweets[0].name, tweets: tweets } );
+  });
 
-  tweetBank.add(name, text);
-  res.redirect('/');
-});
+  router.post('/tweets', urlencodedParser, function(req, res) {
+    // console.log('post tweet req: ', req);
+    var name = req.body.name;
+    var text = req.body.text;
+
+    var tweetObj = tweetBank.add(name, text);
+
+    io.sockets.emit('new_tweet', tweetObj);
+    // res.redirect('/');
+  });
 
 
-
-
-module.exports = router;
+  return router;  
+};

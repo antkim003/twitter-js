@@ -12,22 +12,18 @@
       100 followers
     </div>
     <div class="col-md-9">
-    
-      <!-- display tweets here -->
-      {% for tweet in tweets %}
-        <li><a href="users/{{tweet.name.replace(" ", "_")}}">{{tweet.name}}</a>: <a href="tweets/{{tweet.id}}">{{tweet.text}}</a><br /><a href="#">Re-tweet</a></li>
-      {% endfor %}
-
+      <div id="tweets">
+        <!-- display tweets here -->
+        {% for tweet in tweets %}
+          <li id="tweet_"{{tweet.id}}><a href="users/{{tweet.name.replace(" ", "_")}}">{{tweet.name}}</a>: <a href="tweets/{{tweet.id}}">{{tweet.text}}</a><br /><a href="#">Re-tweet</a></li>
+        {% endfor %}
+      </div>
 
       {% if showForm %}
         <form action="/tweets" method="POST">
           <label for="name_field">Name:</label>
           <input name="name" type="text" id="name_field"  
-            {% if currentUser %} 
 
-              value={{title}} 
-            {% endif %}
-          />
 
           <label for="text_field">Text:</label>
           <input name="text" type="text" id="text_field" style="width: 350px;" />

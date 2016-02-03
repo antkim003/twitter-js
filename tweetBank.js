@@ -4,7 +4,9 @@ var data = [];
 var tweetCounter = 0;
 
 function add (name, text) {
-  data.push({ name: name, text: text, id: tweetCounter++ });
+  var output = { name: name, text: text, id: tweetCounter++ };
+  data.push(output);
+  return output;
 }
 
 function list () {
